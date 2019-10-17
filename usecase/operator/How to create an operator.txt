@@ -1,13 +1,19 @@
-#Criar imagem docker no Docker Hub
+#1. Usar o template disponivel em https://github.com/smartfog/fogflow/tree/master/application/template
+
+#2. Criar imagem docker no Docker Hub
 docker login
 docker build -t "vehicle_counter" .
 docker tag vehicle_counter thiagopereirasilva/vehicle_counter
 docker push thiagopereirasilva/vehicle_counter
 
+#3. Cadastrar Operation no fogflow master
+
+
+##Scripts Uteis para Docker##
 #Parar containers
 docker container stop $(docker container ls -aq)
+docker container prune -f
 
 #Excluir imagens
 docker image rm -f $(docker image ls -aq)
-
-#Criar Fog Function
+docker image prune -f
