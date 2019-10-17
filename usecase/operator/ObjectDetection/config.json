@@ -1,0 +1,8 @@
+[{
+	"command": "CONNECT_BROKER",
+	"brokerURL": "http://10.7.16.42:8070/ngsi10"
+}, {
+	"command": "SET_OUTPUTS",
+	"id": "Stream.ObjectDetector.smart-pole-01",
+	"type": "VehicleType"
+}]
