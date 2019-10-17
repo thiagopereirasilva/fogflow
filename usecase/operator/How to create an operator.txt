@@ -1,0 +1,13 @@
+#Criar imagem docker no Docker Hub
+docker login
+docker build -t "vehicle_counter" .
+docker tag vehicle_counter thiagopereirasilva/vehicle_counter
+docker push thiagopereirasilva/vehicle_counter
+
+#Parar containers
+docker container stop $(docker container ls -aq)
+
+#Excluir imagens
+docker image rm -f $(docker image ls -aq)
+
+#Criar Fog Function
