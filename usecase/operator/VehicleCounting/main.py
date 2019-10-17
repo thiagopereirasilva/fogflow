@@ -7,6 +7,7 @@ import requests
 
 from flask import Flask, abort, jsonify, make_response, request
 
+
 app = Flask(__name__, static_url_path="")
 
 # global variables
@@ -198,7 +199,7 @@ def updateContext(ctxObj):
     response = requests.post(brokerURL + '/updateContext',
                              data=json.dumps(updateCtxReq), headers=headers)
     if response.status_code != 200:
-        print 'failed to update context'
+        print ('failed to update context')
         print response.text
 
 
