@@ -1,0 +1,16 @@
+{
+    "discoveryURL": "http://10.7.40.146/ngsi9",
+    "myIP": "10.7.162.10",
+    "myPort": 8090,
+    "location": {
+        "latitude": 35.24703,
+        "longitude": 136.886218
+    },
+    "iconURL": "/img/camera.png",
+    "type": "CameraMotion",
+    "id": "smart-pole-01",
+    "source": "../imd1039.mov",
+    "roi": "300,300,1000,720",
+    "area": 15000,
+    "crossline": 4
+}
