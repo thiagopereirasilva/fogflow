@@ -110,8 +110,8 @@ def readContextElements(data):
     return ctxObjects
 
 def handleNotify(contextObjs):
-    print("TODO O OBJETO")
-    print(json.dumps(contextObjs, indent=3))
+    #print("TODO O OBJETO")
+    #print(json.dumps(contextObjs, indent=3))
 
     for ctxObj in contextObjs:
         #if(ctxObj['entityId']):

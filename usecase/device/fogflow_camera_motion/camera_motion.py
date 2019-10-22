@@ -333,7 +333,15 @@ def deleteContext(broker, ctxObj):
 class RequestHandler(BaseHTTPRequestHandler):
     # handle GET command
     def do_GET(self):
-        if self.path != '/':
+        if self.path == '/timestamp':
+            self.send_response(200)
+            self.send_header
+            self.send_header('timestamp', str(datetime.now()))
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            self.wfile.write(str(datetime.now()))
+            return
+        elif self.path != '/':
             # send code 200 response
             filename = self.path[1:]
             if path.exists(filename):
@@ -346,9 +354,9 @@ class RequestHandler(BaseHTTPRequestHandler):
                 # send the image file content to client
                 self.wfile.write(loadFile(filename))
                 return
-            
-        self.send_error(404, 'File not Found')
-        return
+        else:
+            self.send_error(404, 'File not Found')
+            return
 
 
 def thread_function(name):

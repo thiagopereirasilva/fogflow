@@ -1,0 +1,449 @@
+{
+	"info": {
+		"_postman_id": "0426d171-c6c1-4d2e-aa03-a348f9b5ca1c",
+		"name": "FogFlow",
+		"description": "Aqui estão presentes as principais requisições que podem ser realizadas no FogFlow.\n\n\n\n@author Thiago Pereira",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "subscribeEntityContext - webhook",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"entities\": [\n        {\n            \"id\": \"Device.CameraMotion.smart-pole-01\",\n            \"isPattern\": true\n        }\n    ],\n    \"reference\": \"http://webhook.site/a1bdbf14-0fdc-4047-a05f-41009c04e8c4\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{fogflow_broker}}/ngsi10/subscribeContext",
+					"protocol": "http",
+					"host": [
+						"{{fogflow_broker}}"
+					],
+					"path": [
+						"ngsi10",
+						"subscribeContext"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "subscribeEntityContext - Anomaly",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"entities\": [\n        {\n            \"id\": \"anomaly.*\",\n            \"isPattern\": true\n        }\n    ],\n    \"reference\": \"http://webhook.site/7fbe3282-cff5-46d6-8e66-48760f6104b5\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://10.7.40.146:8070/ngsi10/subscribeContext",
+					"protocol": "http",
+					"host": [
+						"10",
+						"7",
+						"40",
+						"146"
+					],
+					"port": "8070",
+					"path": [
+						"ngsi10",
+						"subscribeContext"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "subscription - get all subscriptions",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://10.7.40.146:8070/ngsi10/subscription",
+					"protocol": "http",
+					"host": [
+						"10",
+						"7",
+						"40",
+						"146"
+					],
+					"port": "8070",
+					"path": [
+						"ngsi10",
+						"subscription"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "subscription - delete a subscription",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://10.7.40.146:8070/ngsi10/subscription/b0c5e643-a27d-43f6-9a62-4ce2895d2066",
+					"protocol": "http",
+					"host": [
+						"10",
+						"7",
+						"40",
+						"146"
+					],
+					"port": "8070",
+					"path": [
+						"ngsi10",
+						"subscription",
+						"b0c5e643-a27d-43f6-9a62-4ce2895d2066"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateEntityContext - PowerPanel",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"contextElements\": [\n        {\n            \"entityId\": {\n                \"id\": \"Device.PowerPanel.id\",\n                \"type\": \"PowerPanel\",\n                \"isPattern\": false\n            },\n            \"attributes\": [\n                {\n                    \"name\": \"usage\",\n                    \"type\": \"integer\",\n                    \"value\": 323\n                }\n            ],\n            \"domainMetadata\": [\n                {\n                    \"name\": \"location\",\n                    \"type\": \"point\",\n                    \"value\": {\n                        \"latitude\": 36.192221,\n                        \"longitude\": 138.109059\n                    }\n                },\n                {\n                    \"name\": \"shop\",\n                    \"type\": \"string\",\n                    \"value\": \"IMD\"\n                }\n            ]\n        }\n    ],\n    \"updateAction\": \"UPDATE\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://10.7.40.146:8070/ngsi10/updateContext",
+					"protocol": "http",
+					"host": [
+						"10",
+						"7",
+						"40",
+						"146"
+					],
+					"port": "8070",
+					"path": [
+						"ngsi10",
+						"updateContext"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateEntityContext - CameraMotion",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"contextElements\": [\n        {\n            \"entityId\": {\n                \"id\": \"Device.CameraMotion.id\",\n                \"type\": \"CameraMotion\",\n                \"isPattern\": false\n            },\n            \"attributes\": [\n                {\n                    \"name\": \"url\",\n                    \"type\": \"string\",\n                    \"value\": \"http://10.7.162.10:8090/smart-pole-01_2019-10-17_15-57-55-145101_Up-Right.jpg\"\n                },\n                {\n                    \"name\": \"timestamp\",\n                    \"type\": \"string\",\n                    \"value\": \"2019-10-16_11-00-49-503255\"\n                },\n                {\n                    \"name\": \"direction\",\n                    \"type\": \"string\",\n                    \"value\": \"Up-Right\"\n                },\n                {\n                    \"name\": \"iconURL\",\n                    \"type\": \"string\",\n                    \"value\": \"/img/camera.png\"\n                }\n            ],\n            \"domainMetadata\": [\n                {\n                    \"name\": \"location\",\n                    \"type\": \"point\",\n                    \"value\": {\n                        \"latitude\": 35.24703,\n                        \"longitude\": 136.886218\n                    }\n                },\n                {\n                    \"name\": \"cameraID\",\n                    \"type\": \"string\",\n                    \"value\": \"smart-pole-01\"\n                }\n            ]\n        }\n    ],\n    \"updateAction\": \"UPDATE\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://10.7.40.146:8070/ngsi10/updateContext",
+					"protocol": "http",
+					"host": [
+						"10",
+						"7",
+						"40",
+						"146"
+					],
+					"port": "8070",
+					"path": [
+						"ngsi10",
+						"updateContext"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateEntityContext - VehicleType",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"contextElements\": [\n        {\n            \"entityId\": {\n                \"id\": \"Device.VehicleType.id123\",\n                \"type\": \"VehicleType\",\n                \"isPattern\": false\n            },\n            \"attributes\": [\n                {\n                    \"name\": \"url\",\n                    \"type\": \"string\",\n                    \"value\": \"http://10.7.162.10:8090/smart-pole-01_2019-10-16_11-00-39-503255_Up-Right.jpg\"\n                },\n                {\n                    \"name\": \"timestamp\",\n                    \"type\": \"string\",\n                    \"value\": \"2019-10-25_11-00-49-503255\"\n                },\n                {\n                    \"name\": \"class\",\n                    \"type\": \"string\",\n                    \"value\": \"car\"\n                },\n                {\n                    \"name\": \"direction\",\n                    \"type\": \"string\",\n                    \"value\": \"Up-Right\"\n                },\n                {\n                    \"name\": \"iconURL\",\n                    \"type\": \"string\",\n                    \"value\": \"/img/camera.png\"\n                }\n            ],\n            \"domainMetadata\": [\n                {\n                    \"name\": \"cameraID\",\n                    \"type\": \"string\",\n                    \"value\": \"smart-pole-01\"\n                }\n            ]\n        }\n    ],\n    \"updateAction\": \"UPDATE\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://10.7.40.146:8070/ngsi10/updateContext",
+					"protocol": "http",
+					"host": [
+						"10",
+						"7",
+						"40",
+						"146"
+					],
+					"port": "8070",
+					"path": [
+						"ngsi10",
+						"updateContext"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "queryEntity - Return all entities",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://10.7.40.146:8070/ngsi10/entity",
+					"protocol": "http",
+					"host": [
+						"10",
+						"7",
+						"40",
+						"146"
+					],
+					"port": "8070",
+					"path": [
+						"ngsi10",
+						"entity"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteEntity - delete a specific entity",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://10.7.40.146:8070/ngsi10/entity/Stream.VehicleCounting.smart-pole-01",
+					"protocol": "http",
+					"host": [
+						"10",
+						"7",
+						"40",
+						"146"
+					],
+					"port": "8070",
+					"path": [
+						"ngsi10",
+						"entity",
+						"Stream.VehicleCounting.smart-pole-01"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Device - timestamp",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://10.7.162.10:8090/timestamp",
+					"protocol": "http",
+					"host": [
+						"10",
+						"7",
+						"162",
+						"10"
+					],
+					"port": "8090",
+					"path": [
+						"timestamp"
+					]
+				},
+				"description": "http://10.7.162.10:8090/timestamp"
+			},
+			"response": []
+		},
+		{
+			"name": "Use case - video parking control",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"contextElements\": [\n        {\n            \"entityId\": {\n                \"id\": \"ObjectDetector\",\n                \"type\": \"Operator\"\n            },\n            \"attributes\": [\n                {\n                    \"name\": \"designboard\",\n                    \"type\": \"object\",\n                    \"value\": {\n                        \"blocks\": [\n                            {\n                                \"id\": 1,\n                                \"module\": null,\n                                \"type\": \"Parameter\",\n                                \"values\": {\n                                    \"name\": \"CameraMotion\",\n                                    \"values\": [\n                                        \"default\"\n                                    ]\n                                },\n                                \"x\": -427.5,\n                                \"y\": -97\n                            },\n                            {\n                                \"id\": 2,\n                                \"module\": null,\n                                \"type\": \"Operator\",\n                                \"values\": {\n                                    \"description\": \"\",\n                                    \"name\": \"ObjectDetector\"\n                                },\n                                \"x\": -103.5,\n                                \"y\": -91\n                            }\n                        ],\n                        \"edges\": [\n                            {\n                                \"block1\": 1,\n                                \"block2\": 2,\n                                \"connector1\": [\n                                    \"parameter\",\n                                    \"output\"\n                                ],\n                                \"connector2\": [\n                                    \"parameters\",\n                                    \"input\"\n                                ],\n                                \"id\": 1\n                            }\n                        ]\n                    }\n                },\n                {\n                    \"name\": \"operator\",\n                    \"type\": \"object\",\n                    \"value\": {\n                        \"description\": \"\",\n                        \"name\": \"ObjectDetector\",\n                        \"parameters\": [\n                            {\n                                \"name\": \"CameraMotion\",\n                                \"values\": [\n                                    \"default\"\n                                ]\n                            }\n                        ]\n                    }\n                }\n            ],\n            \"domainMetadata\": [\n                {\n                    \"name\": \"location\",\n                    \"type\": \"global\",\n                    \"value\": \"global\"\n                }\n            ]\n        },\n        {\n            \"entityId\": {\n                \"id\": \"VehicleCounter\",\n                \"type\": \"Operator\"\n            },\n            \"attributes\": [\n                {\n                    \"name\": \"designboard\",\n                    \"type\": \"object\",\n                    \"value\": {\n                        \"blocks\": [\n                            {\n                                \"id\": 1,\n                                \"module\": null,\n                                \"type\": \"Parameter\",\n                                \"values\": {\n                                    \"name\": \"VehicleType\",\n                                    \"values\": [\n                                        \"default\"\n                                    ]\n                                },\n                                \"x\": -418.5,\n                                \"y\": -132\n                            },\n                            {\n                                \"id\": 2,\n                                \"module\": null,\n                                \"type\": \"Operator\",\n                                \"values\": {\n                                    \"description\": \"\",\n                                    \"name\": \"VehicleCounter\"\n                                },\n                                \"x\": -168.5,\n                                \"y\": -132\n                            }\n                        ],\n                        \"edges\": [\n                            {\n                                \"block1\": 1,\n                                \"block2\": 2,\n                                \"connector1\": [\n                                    \"parameter\",\n                                    \"output\"\n                                ],\n                                \"connector2\": [\n                                    \"parameters\",\n                                    \"input\"\n                                ],\n                                \"id\": 1\n                            }\n                        ]\n                    }\n                },\n                {\n                    \"name\": \"operator\",\n                    \"type\": \"object\",\n                    \"value\": {\n                        \"description\": \"\",\n                        \"name\": \"VehicleCounter\",\n                        \"parameters\": [\n                            {\n                                \"name\": \"VehicleType\",\n                                \"values\": [\n                                    \"default\"\n                                ]\n                            }\n                        ]\n                    }\n                }\n            ],\n            \"domainMetadata\": [\n                {\n                    \"name\": \"location\",\n                    \"type\": \"global\",\n                    \"value\": \"global\"\n                }\n            ]\n        },\n        {\n            \"entityId\": {\n                \"id\": \"aluiziorocha/object_detector:latest\",\n                \"type\": \"DockerImage\"\n            },\n            \"attributes\": [\n                {\n                    \"name\": \"image\",\n                    \"type\": \"string\",\n                    \"value\": \"aluiziorocha/object_detector\"\n                },\n                {\n                    \"name\": \"tag\",\n                    \"type\": \"string\",\n                    \"value\": \"latest\"\n                },\n                {\n                    \"name\": \"hwType\",\n                    \"type\": \"string\",\n                    \"value\": \"ARM\"\n                },\n                {\n                    \"name\": \"osType\",\n                    \"type\": \"string\",\n                    \"value\": \"Linux\"\n                },\n                {\n                    \"name\": \"operator\",\n                    \"type\": \"string\",\n                    \"value\": \"ObjectDetector\"\n                },\n                {\n                    \"name\": \"prefetched\",\n                    \"type\": \"boolean\",\n                    \"value\": false\n                }\n            ],\n            \"domainMetadata\": [\n                {\n                    \"name\": \"operator\",\n                    \"type\": \"string\",\n                    \"value\": \"ObjectDetector\"\n                }\n            ]\n        },\n        {\n            \"entityId\": {\n                \"id\": \"thiagopereirasilva/vehicle_counter:latest\",\n                \"type\": \"DockerImage\"\n            },\n            \"attributes\": [\n                {\n                    \"name\": \"image\",\n                    \"type\": \"string\",\n                    \"value\": \"thiagopereirasilva/vehicle_counter\"\n                },\n                {\n                    \"name\": \"tag\",\n                    \"type\": \"string\",\n                    \"value\": \"latest\"\n                },\n                {\n                    \"name\": \"hwType\",\n                    \"type\": \"string\",\n                    \"value\": \"X86\"\n                },\n                {\n                    \"name\": \"osType\",\n                    \"type\": \"string\",\n                    \"value\": \"Linux\"\n                },\n                {\n                    \"name\": \"operator\",\n                    \"type\": \"string\",\n                    \"value\": \"VehicleCounter\"\n                },\n                {\n                    \"name\": \"prefetched\",\n                    \"type\": \"boolean\",\n                    \"value\": false\n                }\n            ],\n            \"domainMetadata\": [\n                {\n                    \"name\": \"operator\",\n                    \"type\": \"string\",\n                    \"value\": \"VehicleCounter\"\n                }\n            ]\n        },\n        {\n            \"entityId\": {\n                \"id\": \"FogFunction.ObjectDetector_Function\",\n                \"type\": \"FogFunction\"\n            },\n            \"attributes\": [\n                {\n                    \"name\": \"name\",\n                    \"type\": \"string\",\n                    \"value\": \"ObjectDetector_Function\"\n                },\n                {\n                    \"name\": \"topology\",\n                    \"type\": \"object\",\n                    \"value\": {\n                        \"description\": \"\",\n                        \"name\": \"ObjectDetector_Function\",\n                        \"tasks\": [\n                            {\n                                \"input_streams\": [\n                                    {\n                                        \"groupby\": \"EntityID\",\n                                        \"scoped\": true,\n                                        \"selected_attributes\": [],\n                                        \"selected_type\": \"CameraMotion\"\n                                    }\n                                ],\n                                \"name\": \"ObjectDetector_Task\",\n                                \"operator\": \"ObjectDetector\",\n                                \"output_streams\": [\n                                    {\n                                        \"entity_type\": \"VehicleType\"\n                                    }\n                                ]\n                            }\n                        ]\n                    }\n                },\n                {\n                    \"name\": \"designboard\",\n                    \"type\": \"object\",\n                    \"value\": {\n                        \"blocks\": [\n                            {\n                                \"id\": 1,\n                                \"module\": null,\n                                \"type\": \"EntityStream\",\n                                \"values\": {\n                                    \"groupby\": \"ALL\",\n                                    \"scoped\": true,\n                                    \"selectedattributes\": [\n                                        \"all\"\n                                    ],\n                                    \"selectedtype\": \"CameraMotion\"\n                                },\n                                \"x\": -297,\n                                \"y\": -122\n                            },\n                            {\n                                \"id\": 2,\n                                \"module\": null,\n                                \"type\": \"Task\",\n                                \"values\": {\n                                    \"name\": \"ObjectDetector_Task\",\n                                    \"operator\": \"ObjectDetector\",\n                                    \"outputs\": [\n                                        \"VehicleType\"\n                                    ]\n                                },\n                                \"x\": -83,\n                                \"y\": -80\n                            }\n                        ],\n                        \"edges\": [\n                            {\n                                \"block1\": 1,\n                                \"block2\": 2,\n                                \"connector1\": [\n                                    \"stream\",\n                                    \"output\"\n                                ],\n                                \"connector2\": [\n                                    \"streams\",\n                                    \"input\"\n                                ],\n                                \"id\": 1\n                            }\n                        ]\n                    }\n                },\n                {\n                    \"name\": \"intent\",\n                    \"type\": \"object\",\n                    \"value\": {\n                        \"geoscope\": {\n                            \"scopeType\": \"global\",\n                            \"scopeValue\": \"global\"\n                        },\n                        \"priority\": {\n                            \"exclusive\": false,\n                            \"level\": 0\n                        },\n                        \"qos\": \"default\",\n                        \"topology\": \"ObjectDetector_Function\"\n                    }\n                },\n                {\n                    \"name\": \"status\",\n                    \"type\": \"string\",\n                    \"value\": \"enabled\"\n                }\n            ],\n            \"domainMetadata\": [\n                {\n                    \"name\": \"location\",\n                    \"type\": \"global\",\n                    \"value\": \"global\"\n                }\n            ]\n        },\n        {\n            \"entityId\": {\n                \"id\": \"FogFunction.VehicleCounter_Function\",\n                \"type\": \"FogFunction\"\n            },\n            \"attributes\": [\n                {\n                    \"name\": \"name\",\n                    \"type\": \"string\",\n                    \"value\": \"VehicleCounter_Function\"\n                },\n                {\n                    \"name\": \"topology\",\n                    \"type\": \"object\",\n                    \"value\": {\n                        \"description\": \"\",\n                        \"name\": \"VehicleCounter_Function\",\n                        \"tasks\": [\n                            {\n                                \"input_streams\": [\n                                    {\n                                        \"groupby\": \"EntityID\",\n                                        \"scoped\": false,\n                                        \"selected_attributes\": [],\n                                        \"selected_type\": \"VehicleType\"\n                                    }\n                                ],\n                                \"name\": \"VehicleCounter_Task\",\n                                \"operator\": \"VehicleCounter\",\n                                \"output_streams\": [\n                                    {\n                                        \"entity_type\": \"VehicleCounting\"\n                                    }\n                                ]\n                            }\n                        ]\n                    }\n                },\n                {\n                    \"name\": \"designboard\",\n                    \"type\": \"object\",\n                    \"value\": {\n                        \"blocks\": [\n                            {\n                                \"id\": 1,\n                                \"module\": null,\n                                \"type\": \"EntityStream\",\n                                \"values\": {\n                                    \"groupby\": \"ALL\",\n                                    \"scoped\": false,\n                                    \"selectedattributes\": [\n                                        \"all\"\n                                    ],\n                                    \"selectedtype\": \"VehicleType\"\n                                },\n                                \"x\": -360,\n                                \"y\": -135\n                            },\n                            {\n                                \"id\": 2,\n                                \"module\": null,\n                                \"type\": \"Task\",\n                                \"values\": {\n                                    \"name\": \"VehicleCounter_Task\",\n                                    \"operator\": \"VehicleCounter\",\n                                    \"outputs\": [\n                                        \"VehicleCounting\"\n                                    ]\n                                },\n                                \"x\": -142,\n                                \"y\": -85\n                            }\n                        ],\n                        \"edges\": [\n                            {\n                                \"block1\": 1,\n                                \"block2\": 2,\n                                \"connector1\": [\n                                    \"stream\",\n                                    \"output\"\n                                ],\n                                \"connector2\": [\n                                    \"streams\",\n                                    \"input\"\n                                ],\n                                \"id\": 1\n                            }\n                        ]\n                    }\n                },\n                {\n                    \"name\": \"intent\",\n                    \"type\": \"object\",\n                    \"value\": {\n                        \"geoscope\": {\n                            \"scopeType\": \"global\",\n                            \"scopeValue\": \"global\"\n                        },\n                        \"priority\": {\n                            \"exclusive\": false,\n                            \"level\": 0\n                        },\n                        \"qos\": \"default\",\n                        \"topology\": \"VehicleCounter_Function\"\n                    }\n                },\n                {\n                    \"name\": \"status\",\n                    \"type\": \"string\",\n                    \"value\": \"enabled\"\n                }\n            ],\n            \"domainMetadata\": [\n                {\n                    \"name\": \"location\",\n                    \"type\": \"global\",\n                    \"value\": \"global\"\n                }\n            ]\n        }\n    ],\n    \"updateAction\": \"UPDATE\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://10.7.40.146:8070/ngsi10/updateContext",
+					"protocol": "http",
+					"host": [
+						"10",
+						"7",
+						"40",
+						"146"
+					],
+					"port": "8070",
+					"path": [
+						"ngsi10",
+						"updateContext"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "c0229588-74cc-4f53-916d-0f4bd49478ba",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "2cd09577-6472-4d80-a93b-b3ed4dcb2805",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "13e0dcbd-556e-47e5-842d-f0763826e208",
+			"key": "fogflow_broker",
+			"value": "10.7.40.146:8070",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

@@ -4,7 +4,7 @@ import os
 import threading
 import time
 import requests
-
+import urllib
 from flask import Flask, abort, jsonify, make_response, request
 
 
@@ -128,7 +128,7 @@ def processInputStreamData(obj):
 
     resultCtxObj = {}
     resultCtxObj['entityId'] = {}
-    resultCtxObj['entityId']['id'] = "VehicleCounting." + str(obj['entityId']['id']).split('.')[-1]
+    resultCtxObj['entityId']['id'] = "Stream.VehicleCounting." + str(obj['entityId']['id']).split('.')[-1]
     resultCtxObj['entityId']['type'] = "VehicleCounting"
     resultCtxObj['entityId']['isPattern'] = False
 
@@ -146,13 +146,22 @@ def processInputStreamData(obj):
     resultCtxObj['attributes']['timestamp'] = obj['attributes']['timestamp']
     resultCtxObj['attributes']['direction'] = obj['attributes']['direction']
     resultCtxObj['attributes']['url'] = obj['attributes']['url']
-
     resultCtxObj['metadata'] = {}
     resultCtxObj['metadata'] = obj['metadata']
+
+    url = "http://10.7.162.10:8090/timestamp"
+    initial_timestamp = datetime.datetime.strptime(obj['attributes']['timestamp'], '%Y-%m-%d %H:%M:%S.%f')
+    actual_timetamp = datetime.datetime.strptime(getTimestamp(url), '%Y-%m-%d %H:%M:%S.%f')
+    processing_time = actual_timetamp - initial_timestamp
+    resultCtxObj['attributes']['processing_time'] = {'type': 'string', 'value': str(processing_time)}
 
     with lock:
         updateContext(resultCtxObj)
 
+def getTimestamp(url):
+    resp = urllib.urlopen(url)
+    data = resp.info()
+    return str(data['timestamp'])
 
 def handleConfig(configurations):
     global brokerURL
