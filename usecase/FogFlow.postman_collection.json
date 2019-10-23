@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "0426d171-c6c1-4d2e-aa03-a348f9b5ca1c",
+		"_postman_id": "19a0ee26-81af-4511-828a-7a396dcaa020",
 		"name": "FogFlow Use Case",
 		"description": "Aqui estão presentes as principais requisições que podem ser realizadas no FogFlow.\n\n\n\n@author Thiago Pereira",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -10,7 +10,7 @@
 			"name": "Orion+Cygnus+STH",
 			"item": [
 				{
-					"name": "Connect FogFlow to Orion",
+					"name": "Orion - Connect FogFlow to Orion",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -24,11 +24,16 @@
 								"key": "Accept",
 								"value": "application/json",
 								"type": "text"
+							},
+							{
+								"key": "Destination",
+								"value": "orion-broker",
+								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"entities\": [\n        {\n            \"type\": \"VehicleType\",\n            \"isPattern\": true\n        }\n    ],\n    \"reference\": \"http://10.7.128.15:1026/v1\"\n}",
+							"raw": "{\n    \"entities\": [\n        {\n        \t\"id\": \".*\",\n            \"type\": \"VehicleType\",\n            \"isPattern\": true\n        }\n    ],\n    \"reference\": \"http://10.7.128.15:1026/v2\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -51,7 +56,7 @@
 					"response": []
 				},
 				{
-					"name": "Connect Cygnus to Orion",
+					"name": "Cygnus - Connect Cygnus to Orion",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -64,7 +69,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"entities\": [\n        {\n            \"isPattern\": \"true\",\n            \"id\": \".*\",\n            \"type\": \"PowerPanel\"\n        }\n    ],\n    \"attributes\": [],\n    \"reference\": \"http://10.7.128.15:5050/notify\",\n    \"notifyConditions\": [\n        {\n            \"type\": \"ONCHANGE\"\n        }\n    ]\n}",
+							"raw": "{\n    \"entities\": [\n        {\n            \"isPattern\": \"true\",\n            \"id\": \".*\",\n            \"type\": \"VehicleType\"\n        }\n    ],\n    \"attributes\": [],\n    \"reference\": \"http://10.7.128.15:5050/notify\",\n    \"notifyConditions\": [\n        {\n            \"type\": \"ONCHANGE\"\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -126,7 +131,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{sth_comet}}/STH/v1/contextEntities/type/PowerPanel/id/Device.Lampada.id2/attributes/usage?hLimit=10&hOffset=0",
+							"raw": "http://{{sth_comet}}/STH/v1/contextEntities/type/VehicleType/id/Device.VehicleType.987654321/attributes/url?hLimit=10&hOffset=0",
 							"protocol": "http",
 							"host": [
 								"{{sth_comet}}"
@@ -136,11 +141,11 @@
 								"v1",
 								"contextEntities",
 								"type",
-								"PowerPanel",
+								"VehicleType",
 								"id",
-								"Device.Lampada.id2",
+								"Device.VehicleType.987654321",
 								"attributes",
-								"usage"
+								"url"
 							],
 							"query": [
 								{
@@ -182,7 +187,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://{{orion_broker}}/v2/subscriptions/5daf0bff118fec421be679de",
+							"raw": "http://{{orion_broker}}/v2/subscriptions/5daf0644118fec421be679db",
 							"protocol": "http",
 							"host": [
 								"{{orion_broker}}"
@@ -190,7 +195,7 @@
 							"path": [
 								"v2",
 								"subscriptions",
-								"5daf0bff118fec421be679de"
+								"5daf0644118fec421be679db"
 							]
 						}
 					},
@@ -279,335 +284,387 @@
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "subscribeEntityContext - webhook",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"entities\": [\n        {\n            \"id\": \"Device.CameraMotion.smart-pole-01\",\n            \"isPattern\": true\n        }\n    ],\n    \"reference\": \"http://webhook.site/a1bdbf14-0fdc-4047-a05f-41009c04e8c4\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "FogFlow",
+			"item": [
+				{
+					"name": "subscribeEntityContext - webhook",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"entities\": [\n        {\n            \"id\": \"Device.CameraMotion.smart-pole-01\",\n            \"isPattern\": true\n        }\n    ],\n    \"reference\": \"http://webhook.site/a1bdbf14-0fdc-4047-a05f-41009c04e8c4\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{fogflow_broker}}/ngsi10/subscribeContext",
+							"protocol": "http",
+							"host": [
+								"{{fogflow_broker}}"
+							],
+							"path": [
+								"ngsi10",
+								"subscribeContext"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://{{fogflow_broker}}/ngsi10/subscribeContext",
-					"protocol": "http",
-					"host": [
-						"{{fogflow_broker}}"
-					],
-					"path": [
-						"ngsi10",
-						"subscribeContext"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "subscribeEntityContext - Anomaly",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"entities\": [\n        {\n            \"id\": \"anomaly.*\",\n            \"isPattern\": true\n        }\n    ],\n    \"reference\": \"http://webhook.site/7fbe3282-cff5-46d6-8e66-48760f6104b5\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "subscribeEntityContext - Anomaly",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"entities\": [\n        {\n            \"id\": \"anomaly.*\",\n            \"isPattern\": true\n        }\n    ],\n    \"reference\": \"http://webhook.site/7fbe3282-cff5-46d6-8e66-48760f6104b5\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{fogflow_broker}}/ngsi10/subscribeContext",
+							"protocol": "http",
+							"host": [
+								"{{fogflow_broker}}"
+							],
+							"path": [
+								"ngsi10",
+								"subscribeContext"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://10.7.40.146:8070/ngsi10/subscribeContext",
-					"protocol": "http",
-					"host": [
-						"10",
-						"7",
-						"40",
-						"146"
-					],
-					"port": "8070",
-					"path": [
-						"ngsi10",
-						"subscribeContext"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "subscription - get all subscriptions",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "subscription - get all subscriptions",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{fogflow_broker}}/ngsi10/subscription",
+							"protocol": "http",
+							"host": [
+								"{{fogflow_broker}}"
+							],
+							"path": [
+								"ngsi10",
+								"subscription"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://{{fogflow_broker}}/ngsi10/subscription",
-					"protocol": "http",
-					"host": [
-						"{{fogflow_broker}}"
-					],
-					"path": [
-						"ngsi10",
-						"subscription"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "subscription - delete a subscription",
-			"request": {
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "subscription - delete a subscription",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{fogflow_broker}}/ngsi10/subscription/2a291c57-f63e-4165-ae06-1c3e3cd96337",
+							"protocol": "http",
+							"host": [
+								"{{fogflow_broker}}"
+							],
+							"path": [
+								"ngsi10",
+								"subscription",
+								"2a291c57-f63e-4165-ae06-1c3e3cd96337"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://{{fogflow_broker}}/ngsi10/subscription/5c24fbff-ef6b-43bc-925a-7a911456ad8a",
-					"protocol": "http",
-					"host": [
-						"{{fogflow_broker}}"
-					],
-					"path": [
-						"ngsi10",
-						"subscription",
-						"5c24fbff-ef6b-43bc-925a-7a911456ad8a"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "updateEntityContext - PowerPanel",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"contextElements\": [\n        {\n            \"entityId\": {\n                \"id\": \"Device.PowerPanel.id\",\n                \"type\": \"PowerPanel\",\n                \"isPattern\": false\n            },\n            \"attributes\": [\n                {\n                    \"name\": \"usage\",\n                    \"type\": \"integer\",\n                    \"value\": 323\n                }\n            ],\n            \"domainMetadata\": [\n                {\n                    \"name\": \"location\",\n                    \"type\": \"point\",\n                    \"value\": {\n                        \"latitude\": 36.192221,\n                        \"longitude\": 138.109059\n                    }\n                },\n                {\n                    \"name\": \"shop\",\n                    \"type\": \"string\",\n                    \"value\": \"IMD\"\n                }\n            ]\n        }\n    ],\n    \"updateAction\": \"UPDATE\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "updateEntityContext - Camera",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"contextElements\": [\n        {\n            \"entityId\": {\n                \"id\": \"Device.Camera.id.camera\",\n                \"type\": \"Camera\",\n                \"isPattern\": false\n            },\n            \"attributes\": [\n                {\n                    \"name\": \"url\",\n                    \"type\": \"string\",\n                    \"value\": \"http://10.7.40.146:8080/photo/lostchild.png\"\n                },\n                {\n                    \"name\": \"iconURL\",\n                    \"type\": \"string\",\n                    \"value\": \"/photo/camera.png\"\n                }\n            ],\n            \"domainMetadata\": [\n                {\n                    \"name\": \"location\",\n                    \"type\": \"point\",\n                    \"value\": {\n                        \"latitude\": 36.192221,\n                        \"longitude\": 138.109059\n                    }\n                },\n                {\n                    \"name\": \"shop\",\n                    \"type\": \"string\",\n                    \"value\": \"IMD\"\n                }\n            ]\n        }\n    ],\n    \"updateAction\": \"UPDATE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{fogflow_broker}}/ngsi10/updateContext",
+							"protocol": "http",
+							"host": [
+								"{{fogflow_broker}}"
+							],
+							"path": [
+								"ngsi10",
+								"updateContext"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://10.7.40.146:8070/ngsi10/updateContext",
-					"protocol": "http",
-					"host": [
-						"10",
-						"7",
-						"40",
-						"146"
-					],
-					"port": "8070",
-					"path": [
-						"ngsi10",
-						"updateContext"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "updateEntityContext - CameraMotion",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"contextElements\": [\n        {\n            \"entityId\": {\n                \"id\": \"Device.CameraMotion.id\",\n                \"type\": \"CameraMotion\",\n                \"isPattern\": false\n            },\n            \"attributes\": [\n                {\n                    \"name\": \"url\",\n                    \"type\": \"string\",\n                    \"value\": \"http://10.7.162.10:8090/smart-pole-01_2019-10-17_15-57-55-145101_Up-Right.jpg\"\n                },\n                {\n                    \"name\": \"timestamp\",\n                    \"type\": \"string\",\n                    \"value\": \"2019-10-16_11-00-49-503255\"\n                },\n                {\n                    \"name\": \"direction\",\n                    \"type\": \"string\",\n                    \"value\": \"Up-Right\"\n                },\n                {\n                    \"name\": \"iconURL\",\n                    \"type\": \"string\",\n                    \"value\": \"/img/camera.png\"\n                }\n            ],\n            \"domainMetadata\": [\n                {\n                    \"name\": \"location\",\n                    \"type\": \"point\",\n                    \"value\": {\n                        \"latitude\": 35.24703,\n                        \"longitude\": 136.886218\n                    }\n                },\n                {\n                    \"name\": \"cameraID\",\n                    \"type\": \"string\",\n                    \"value\": \"smart-pole-01\"\n                }\n            ]\n        }\n    ],\n    \"updateAction\": \"UPDATE\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "updateEntityContext - PowerPanel",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"contextElements\": [\n        {\n            \"entityId\": {\n                \"id\": \"Device.PowerPanel.id\",\n                \"type\": \"PowerPanel\",\n                \"isPattern\": false\n            },\n            \"attributes\": [\n                {\n                    \"name\": \"usage\",\n                    \"type\": \"integer\",\n                    \"value\": 74\n                },\n                {\n                    \"name\": \"iconURL\",\n                    \"type\": \"string\",\n                    \"value\": \"/photo/camera.png\"\n                }\n            ],\n            \"domainMetadata\": [\n                {\n                    \"name\": \"location\",\n                    \"type\": \"point\",\n                    \"value\": {\n                        \"latitude\": 36.192221,\n                        \"longitude\": 138.109059\n                    }\n                },\n                {\n                    \"name\": \"shop\",\n                    \"type\": \"string\",\n                    \"value\": \"IMD\"\n                }\n            ]\n        }\n    ],\n    \"updateAction\": \"UPDATE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{fogflow_broker}}/ngsi10/updateContext",
+							"protocol": "http",
+							"host": [
+								"{{fogflow_broker}}"
+							],
+							"path": [
+								"ngsi10",
+								"updateContext"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://10.7.40.146:8070/ngsi10/updateContext",
-					"protocol": "http",
-					"host": [
-						"10",
-						"7",
-						"40",
-						"146"
-					],
-					"port": "8070",
-					"path": [
-						"ngsi10",
-						"updateContext"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "updateEntityContext - VehicleType",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"contextElements\": [\n        {\n            \"entityId\": {\n                \"id\": \"Device.VehicleType.1112345\",\n                \"type\": \"VehicleType\",\n                \"isPattern\": false\n            },\n            \"attributes\": [\n                {\n                    \"name\": \"url\",\n                    \"type\": \"string\",\n                    \"value\": \"http://10.7.162.10:8090/smart-pole-01_2019-10-16_11-00-39-503255_Up-Right.jpg\"\n                },\n                {\n                    \"name\": \"timestamp\",\n                    \"type\": \"string\",\n                    \"value\": \"2019-10-28_11-00-49-503255\"\n                },\n                {\n                    \"name\": \"class\",\n                    \"type\": \"string\",\n                    \"value\": \"motorbike\"\n                },\n                {\n                    \"name\": \"direction\",\n                    \"type\": \"string\",\n                    \"value\": \"Up-Right\"\n                },\n                {\n                    \"name\": \"iconURL\",\n                    \"type\": \"string\",\n                    \"value\": \"/img/camera.png\"\n                }\n            ],\n            \"domainMetadata\": [\n                {\n                    \"name\": \"cameraID\",\n                    \"type\": \"string\",\n                    \"value\": \"smart-pole-01\"\n                }\n            ]\n        }\n    ],\n    \"updateAction\": \"UPDATE\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "updateEntityContext - CameraMotion",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"contextElements\": [\n        {\n            \"entityId\": {\n                \"id\": \"Device.CameraMotion.id\",\n                \"type\": \"CameraMotion\",\n                \"isPattern\": false\n            },\n            \"attributes\": [\n                {\n                    \"name\": \"url\",\n                    \"type\": \"string\",\n                    \"value\": \"http://10.7.162.10:8090/smart-pole-01_2019-10-17_15-57-55-145101_Up-Right.jpg\"\n                },\n                {\n                    \"name\": \"timestamp\",\n                    \"type\": \"string\",\n                    \"value\": \"2019-10-16_11-00-49-503255\"\n                },\n                {\n                    \"name\": \"direction\",\n                    \"type\": \"string\",\n                    \"value\": \"Up-Right\"\n                },\n                {\n                    \"name\": \"iconURL\",\n                    \"type\": \"string\",\n                    \"value\": \"/img/camera.png\"\n                }\n            ],\n            \"domainMetadata\": [\n                {\n                    \"name\": \"location\",\n                    \"type\": \"point\",\n                    \"value\": {\n                        \"latitude\": 35.24703,\n                        \"longitude\": 136.886218\n                    }\n                },\n                {\n                    \"name\": \"cameraID\",\n                    \"type\": \"string\",\n                    \"value\": \"smart-pole-01\"\n                }\n            ]\n        }\n    ],\n    \"updateAction\": \"UPDATE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{fogflow_broker}}/ngsi10/updateContext",
+							"protocol": "http",
+							"host": [
+								"{{fogflow_broker}}"
+							],
+							"path": [
+								"ngsi10",
+								"updateContext"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://10.7.40.146:8070/ngsi10/updateContext",
-					"protocol": "http",
-					"host": [
-						"10",
-						"7",
-						"40",
-						"146"
-					],
-					"port": "8070",
-					"path": [
-						"ngsi10",
-						"updateContext"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "queryEntity - Return all entities",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "updateEntityContext - VehicleType",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"contextElements\": [\n        {\n            \"entityId\": {\n                \"id\": \"Device.VehicleType.987654321\",\n                \"type\": \"VehicleType\",\n                \"isPattern\": false\n            },\n            \"attributes\": [\n                {\n                    \"name\": \"url\",\n                    \"type\": \"string\",\n                    \"value\": \"http://10.7.162.10:8090/smart-pole-01_2019-10-21_11-00-39-503255_Up-Right.jpg\"\n                },\n                {\n                    \"name\": \"timestamp\",\n                    \"type\": \"string\",\n                    \"value\": \"2019-10-28_11-00-49-503255\"\n                },\n                {\n                    \"name\": \"class\",\n                    \"type\": \"string\",\n                    \"value\": \"car\"\n                },\n                {\n                    \"name\": \"direction\",\n                    \"type\": \"string\",\n                    \"value\": \"Up-Right\"\n                },\n                {\n                    \"name\": \"iconURL\",\n                    \"type\": \"string\",\n                    \"value\": \"/img/camera.png\"\n                }\n            ],\n            \"domainMetadata\": [\n                {\n                    \"name\": \"cameraID\",\n                    \"type\": \"string\",\n                    \"value\": \"smart-pole-01\"\n                }\n            ]\n        }\n    ],\n    \"updateAction\": \"UPDATE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{fogflow_broker}}/ngsi10/updateContext",
+							"protocol": "http",
+							"host": [
+								"{{fogflow_broker}}"
+							],
+							"path": [
+								"ngsi10",
+								"updateContext"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://10.7.40.146:8070/ngsi10/entity",
-					"protocol": "http",
-					"host": [
-						"10",
-						"7",
-						"40",
-						"146"
-					],
-					"port": "8070",
-					"path": [
-						"ngsi10",
-						"entity"
-					]
+				{
+					"name": "queryEntity - Return all entities",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{fogflow_broker}}/ngsi10/entity",
+							"protocol": "http",
+							"host": [
+								"{{fogflow_broker}}"
+							],
+							"path": [
+								"ngsi10",
+								"entity"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteEntity - delete a specific entity",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://{{fogflow_broker}}/ngsi10/entity/Stream.VehicleType.smart-pole-01",
+							"protocol": "http",
+							"host": [
+								"{{fogflow_broker}}"
+							],
+							"path": [
+								"ngsi10",
+								"entity",
+								"Stream.VehicleType.smart-pole-01"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateEntitySream - ChildInfo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"contextElements\": [\n        {\n            \"entityId\": {\n                \"id\": \"ChildLost.55\",\n                \"type\": \"ChildLost\",\n                \"isPattern\": false\n            },\n            \"attributes\": [\n                {\n                    \"name\": \"imageURL\",\n                    \"type\": \"string\",\n                    \"value\": \"http://10.7.40.146:8080/photo/lostchild.png\"\n                }\n            ]\n        }\n    ],\n    \"updateAction\": \"UPDATE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{fogflow_broker}}/ngsi10/updateContext",
+							"protocol": "http",
+							"host": [
+								"{{fogflow_broker}}"
+							],
+							"path": [
+								"ngsi10",
+								"updateContext"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
-		},
-		{
-			"name": "deleteEntity - delete a specific entity",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "http://10.7.40.146:8070/ngsi10/entity/Stream.VehicleCounting.smart-pole-01",
-					"protocol": "http",
-					"host": [
-						"10",
-						"7",
-						"40",
-						"146"
-					],
-					"port": "8070",
-					"path": [
-						"ngsi10",
-						"entity",
-						"Stream.VehicleCounting.smart-pole-01"
-					]
-				}
-			},
-			"response": []
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Device - timestamp",
@@ -622,15 +679,11 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://10.7.162.10:8090/timestamp",
+					"raw": "http://{{beagle_bone}}/timestamp",
 					"protocol": "http",
 					"host": [
-						"10",
-						"7",
-						"162",
-						"10"
+						"{{beagle_bone}}"
 					],
-					"port": "8090",
 					"path": [
 						"timestamp"
 					]
@@ -661,15 +714,11 @@
 					}
 				},
 				"url": {
-					"raw": "http://10.7.40.146:8070/ngsi10/updateContext",
+					"raw": "http://{{fogflow_broker}}/ngsi10/updateContext",
 					"protocol": "http",
 					"host": [
-						"10",
-						"7",
-						"40",
-						"146"
+						"{{fogflow_broker}}"
 					],
-					"port": "8070",
 					"path": [
 						"ngsi10",
 						"updateContext"
@@ -703,27 +752,33 @@
 	],
 	"variable": [
 		{
-			"id": "4b4b727b-1102-4ca4-ab14-05ddc1658739",
+			"id": "a61b1f9e-4d8e-467b-8565-026efdef420c",
 			"key": "fogflow_broker",
 			"value": "10.7.40.146:8070",
 			"type": "string"
 		},
 		{
-			"id": "65db9c5e-80c7-49c0-8d6e-e1e67c521b55",
+			"id": "4d7ee5dc-0542-492a-9b9d-d753d90e0306",
 			"key": "orion_broker",
 			"value": "10.7.128.15:1026",
 			"type": "string"
 		},
 		{
-			"id": "190c96da-fbda-4b2f-ab95-b3c006b533bc",
+			"id": "b7aeb9d0-bbb6-41ab-af5e-78579611bf55",
 			"key": "cygnus",
 			"value": "10.7.128.15:5050",
 			"type": "string"
 		},
 		{
-			"id": "a9eddd6b-3e5c-4640-9552-f5dfa030b739",
+			"id": "6be27f8d-6620-4e11-935c-67b76d2b8fde",
 			"key": "sth_comet",
 			"value": "10.7.128.15:8666",
+			"type": "string"
+		},
+		{
+			"id": "c845403f-437d-4a6f-b2a1-8a1aa06415a2",
+			"key": "beagle_bone",
+			"value": "10.7.162.10:8090",
 			"type": "string"
 		}
 	],

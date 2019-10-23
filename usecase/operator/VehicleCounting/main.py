@@ -57,6 +57,13 @@ def notifyContext():
     return jsonify({'responseCode': 200})
 
 
+def signal_handler(signal, frame):
+    print('Signal to stop this process!')
+    # delete my registration and context entity
+    # unpublishMySelf()
+    sys.exit(0)
+
+
 def element2Object(element):
     ctxObj = {}
 
@@ -115,8 +122,8 @@ def readContextElements(data):
 def handleNotify(contextObjs):
     for ctxObj in contextObjs:
         #entityId = ctxObj['entityId']
-        #if (entityId['type'] == 'VehicleType'):
-            processInputStreamData(ctxObj)
+        # if (entityId['type'] == 'VehicleType'):
+        processInputStreamData(ctxObj)
 
 
 def processInputStreamData(obj):
@@ -128,7 +135,8 @@ def processInputStreamData(obj):
 
     resultCtxObj = {}
     resultCtxObj['entityId'] = {}
-    resultCtxObj['entityId']['id'] = "Stream.VehicleCounting." + str(obj['entityId']['id']).split('.')[-1]
+    resultCtxObj['entityId']['id'] = "Stream.VehicleCounting." + \
+        str(obj['entityId']['id']).split('.')[-1]
     resultCtxObj['entityId']['type'] = "VehicleCounting"
     resultCtxObj['entityId']['isPattern'] = False
 
@@ -141,8 +149,10 @@ def processInputStreamData(obj):
         print('motorbikeCounter = ' + str(motorbikeCounter))
 
     resultCtxObj['attributes'] = {}
-    resultCtxObj['attributes']['cars'] = {'type': 'integer', 'value': str(carCounter)}
-    resultCtxObj['attributes']['motorbikes'] = {'type': 'integer', 'value': str(motorbikeCounter)}
+    resultCtxObj['attributes']['cars'] = {
+        'type': 'integer', 'value': str(carCounter)}
+    resultCtxObj['attributes']['motorbikes'] = {
+        'type': 'integer', 'value': str(motorbikeCounter)}
     resultCtxObj['attributes']['timestamp'] = obj['attributes']['timestamp']
     resultCtxObj['attributes']['direction'] = obj['attributes']['direction']
     resultCtxObj['attributes']['url'] = obj['attributes']['url']
@@ -150,18 +160,31 @@ def processInputStreamData(obj):
     resultCtxObj['metadata'] = obj['metadata']
 
     url = "http://10.7.162.10:8090/timestamp"
-    initial_timestamp = datetime.datetime.strptime(obj['attributes']['timestamp'], '%Y-%m-%d %H:%M:%S.%f')
-    actual_timetamp = datetime.datetime.strptime(getTimestamp(url), '%Y-%m-%d %H:%M:%S.%f')
+    initial_timestamp = datetime.datetime.strptime(
+        obj['attributes']['timestamp'], '%Y-%m-%d %H:%M:%S.%f')
+
+    actual_timetamp = getTimestamp(url)
+    print('timestamp from server')
+    print(actual_timetamp)
+
+    actual_timetamp = datetime.datetime.strptime(
+        actual_timetamp, '%Y-%m-%d %H:%M:%S.%f')
+
     processing_time = actual_timetamp - initial_timestamp
-    resultCtxObj['attributes']['processing_time'] = {'type': 'string', 'value': str(processing_time)}
+
+    resultCtxObj['attributes']['processing_time'] = {
+        'type': 'string', 'value': str(processing_time)}
 
     with lock:
         updateContext(resultCtxObj)
 
+
 def getTimestamp(url):
+    print('===============Fetching Timestamp====================')
     resp = urllib.urlopen(url)
     data = resp.info()
     return str(data['timestamp'])
+
 
 def handleConfig(configurations):
     global brokerURL
@@ -208,7 +231,7 @@ def updateContext(ctxObj):
     response = requests.post(brokerURL + '/updateContext',
                              data=json.dumps(updateCtxReq), headers=headers)
     if response.status_code != 200:
-        print ('failed to update context')
+        print('failed to update context')
         print response.text
 
 
