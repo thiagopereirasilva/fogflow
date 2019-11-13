@@ -161,7 +161,7 @@ def processInputStreamData(obj):
 
     url = "http://10.7.162.10:8090/timestamp"
     initial_timestamp = datetime.datetime.strptime(
-        obj['attributes']['timestamp'], '%Y-%m-%d %H:%M:%S.%f')
+        str(obj['attributes']['timestamp']), '%Y-%m-%d %H:%M:%S.%f')
 
     actual_timetamp = getTimestamp(url)
     print('timestamp from server')
