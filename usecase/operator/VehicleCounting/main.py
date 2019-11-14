@@ -160,27 +160,40 @@ def processInputStreamData(obj):
     resultCtxObj['metadata'] = obj['metadata']
 
     url = "http://10.7.162.10:8090/timestamp"
-    initial_timestamp = datetime.datetime.strptime(
-        str(obj['attributes']['timestamp']), '%Y-%m-%d %H:%M:%S.%f')
+
+    # Data format from VehicleType Entity %Y-%m-%d_%H-%M-%S-%f
+                    
+    datetimeFormat = '%Y-%m-%d_%H-%M-%S-%f'
+    #print("TODO ATRIBUTO", obj['attributes'])
+    #initial_timestamp = datetime.datetime.strptime(obj['attributes']['timestamp'], datetimeFormat)
+
+    timestamp = obj['attributes']['timestamp']
+    #print('Full timestamp')
+    #print(timestamp)
+    #print(type(timestamp))
+
+    initial_timestamp = datetime.datetime.strptime(timestamp['value'], datetimeFormat)
+    #print('Initial timestamp')
+    #print(initial_timestamp)
+    #print(type(initial_timestamp))
 
     actual_timetamp = getTimestamp(url)
-    print('timestamp from server')
-    print(actual_timetamp)
-
-    actual_timetamp = datetime.datetime.strptime(
-        actual_timetamp, '%Y-%m-%d %H:%M:%S.%f')
+    actual_timetamp = datetime.datetime.strptime(actual_timetamp, datetimeFormat)
+    #print('Server timestamp')
+    #print(actual_timetamp)
+    #print(type(actual_timetamp))
 
     processing_time = actual_timetamp - initial_timestamp
 
     resultCtxObj['attributes']['processing_time'] = {
-        'type': 'string', 'value': str(processing_time)}
+        'type': 'string', 'value': str(processing_time.seconds) + 's:' + str(processing_time.microseconds)}
 
     with lock:
         updateContext(resultCtxObj)
 
 
 def getTimestamp(url):
-    print('===============Fetching Timestamp====================')
+    #print('===============Fetching Timestamp====================')
     resp = urllib.urlopen(url)
     data = resp.info()
     return str(data['timestamp'])

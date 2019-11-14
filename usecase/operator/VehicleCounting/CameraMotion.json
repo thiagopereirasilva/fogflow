@@ -1,0 +1,49 @@
+{
+    "contextElements": [
+        {
+            "entityId": {
+                "id": "Device.CameraMotion.id",
+                "type": "CameraMotion",
+                "isPattern": false
+            },
+            "attributes": [
+                {
+                    "name": "url",
+                    "type": "string",
+                    "value": "http://10.7.162.10:8090/smart-pole-01_2019-10-17_15-57-55-145101_Up-Right.jpg"
+                },
+                {
+                    "name": "timestamp",
+                    "type": "string",
+                    "value": "2019-11-14_16-46-01-918029"
+                },
+                {
+                    "name": "direction",
+                    "type": "string",
+                    "value": "Up-Right"
+                },
+                {
+                    "name": "iconURL",
+                    "type": "string",
+                    "value": "/img/camera.png"
+                }
+            ],
+            "domainMetadata": [
+                {
+                    "name": "location",
+                    "type": "point",
+                    "value": {
+                        "latitude": 35.24703,
+                        "longitude": 136.886218
+                    }
+                },
+                {
+                    "name": "cameraID",
+                    "type": "string",
+                    "value": "smart-pole-01"
+                }
+            ]
+        }
+    ],
+    "updateAction": "UPDATE"
+}
