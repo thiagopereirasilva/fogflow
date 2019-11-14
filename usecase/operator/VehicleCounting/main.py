@@ -187,7 +187,7 @@ def processInputStreamData(obj):
 
     resultCtxObj['attributes']['processing_time'] = {
         'type': 'string', 'value': str(processing_time.seconds) + 's:' + str(processing_time.microseconds)}
-
+    #print(str(processing_time.seconds) + 's:' + str(processing_time.microseconds))
     with lock:
         updateContext(resultCtxObj)
 
