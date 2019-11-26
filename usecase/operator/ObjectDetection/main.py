@@ -4,6 +4,8 @@ import json
 import threading
 import os
 import urllib
+import sys
+import signal
 
 # import the necessary packages
 import cv2
@@ -25,6 +27,41 @@ brokerURL = ''
 outputs = []
 timer = None
 lock = threading.Lock()
+
+def signal_handler(signal, frame):
+    print('You pressed Ctrl+C!')
+    # delete my registration and context entity
+    unpublishMySelf()
+    #sys.exit(0)
+
+def unpublishMySelf():
+    entity = {}
+    entity['entityId'] = {}
+    entity['entityId']['id'] = 'Stream.VehicleType'
+    entity['entityId']['type'] = 'VehicleType'
+    entity['entityId']['isPattern'] = False
+    entity['attributes'] = {}
+    entity['metadata'] = {}
+    
+    deleteContext(entity)
+
+def deleteContext(ctxObj):
+    global brokerURL
+    if brokerURL == '':
+        return
+    print('===============unpublish context entity====================')
+    ctxElement = object2Element(ctxObj)
+    
+    updateCtxReq = {}
+    updateCtxReq['updateAction'] = 'DELETE'
+    updateCtxReq['contextElements'] = []
+    updateCtxReq['contextElements'].append(ctxElement)
+
+    headers = {'Accept' : 'application/json', 'Content-Type' : 'application/json'}
+    response = requests.post(brokerURL + '/updateContext', data=json.dumps(updateCtxReq), headers=headers)
+    if response.status_code != 200:
+        print ('failed to delete context')
+        print (response.text)
 
 @app.errorhandler(400)
 def not_found(error):
@@ -140,7 +177,7 @@ def processInputStreamData(obj):
 
     # publish the counting result
     entity = {}       
-    entity['id'] = "Stream.VehicleType." + obj["entityId"]["id"].split('.')[-1]
+    entity['id'] = "Stream.VehicleType"# + obj["entityId"]["id"].split('.')[-1]
     entity['type'] = "VehicleType"
     entity['url'] = url
     entity['timestamp'] = obj["attributes"]["timestamp"]["value"]
@@ -170,7 +207,6 @@ def handleConfig(configurations):
         if config['command'] == 'SET_OUTPUTS':
             outputs.append({'id': config['id'], 'type': config['type']})
     
-
 def publishResult(result, metadata):
     resultCtxObj = {}
         
@@ -217,7 +253,7 @@ if __name__ == '__main__':
     myCfg = os.environ['adminCfg']
     adminCfg = json.loads(myCfg)
     handleConfig(adminCfg)
-    
+    signal.signal(signal.SIGINT, signal_handler)
     app.run(host='0.0.0.0', port=myport)
     
     #timer.cancel()
