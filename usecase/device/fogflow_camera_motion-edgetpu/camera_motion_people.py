@@ -1,5 +1,5 @@
 # Program to capture the motion of an object from camera/video_file and send it to FogFlow Operator
-# indicating its box and direction. All parameters must be informed in camera_motion.json
+# indicating its box and direction. All parameters must be informed in camera_motion_people.json
 
 import threading
 import signal
@@ -155,11 +155,11 @@ def publishMySelf(filename, direction):
     deviceCtxObj['attributes']['direction'] = {'type': 'string', 'value': direction}
     deviceCtxObj['attributes']['iconURL'] = {'type': 'string', 'value': profile['iconURL']}
     deviceCtxObj['attributes']['camera_id'] = {'type': 'string', 'value': profile['id']}
-    deviceCtxObj['attributes']['location'] = {'type': 'point', 'value': {'latitude': profile['location']['latitude'],
-                                                                         'longitude': profile['location']['longitude']}}
     deviceCtxObj['attributes']['timestamp_objectDetection'] = {'type': 'string',
-                                                               'value': getTimestamp(profile["timestamp_server"])}
-
+                                                               'value': getTimestamp(profile['timestamp_server'])}
+    deviceCtxObj['metadata'] = {}
+    deviceCtxObj['metadata']['location'] = {'type': 'point', 'value': {'latitude': profile['location']['latitude'],
+                                                                       'longitude': profile['location']['longitude']}}
     updateContext(brokerURL, deviceCtxObj)
 
 
@@ -271,7 +271,7 @@ def thread_function(name):
     logging.info("[INFO] Thread %s: starting", name)
 
     camera = CameraMotion(camera_id=profile['id'], src_video=profile['source'], roi=profile['roi'],
-                          max_width=profile['max_width'], direction=profile['direction'], 
+                          max_width=profile['max_width'], direction=profile['direction'],
                           model=profile['model'], labels=profile['labels'], confidence=profile['confidence'])
     camera.run()
 
@@ -290,11 +290,11 @@ def run():
 
     logging.info('[INFO] local image server at http://' + profile['myIP'] + ':'
                  + str(profile['myPort']) + '/image/<filename>')
- 
+
     signal.signal(signal.SIGINT, signal_handler)
     server_address = ('0.0.0.0', profile['myPort'])
     httpd = HTTPServer(server_address, RequestHandler)
-    httpd.serve_forever() # blocking function call
+    httpd.serve_forever()  # blocking function call
 
 
 if __name__ == '__main__':
@@ -302,7 +302,7 @@ if __name__ == '__main__':
     logging.basicConfig(format=format, level=logging.INFO,
                         datefmt="%H:%M:%S")
 
-    cfgFileName = 'camera_motion.json'
+    cfgFileName = 'camera_motion_people.json'
     if len(sys.argv) >= 2:
         cfgFileName = sys.argv[1]
 

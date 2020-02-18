@@ -1,40 +1,42 @@
 # Program to capture the motion of an object from camera/video_file and send it to FogFlow Operator
 # indicating its box and direction. All parameters must be informed in camera_motion_people.json
 
-import time
 import threading
 import signal
 import sys
 import json
+import urllib
 import requests
 import logging
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from os import path
 # CameraMotion class
+from edgetpu.detection.engine import DetectionEngine
 from imutils import resize
 from imutils.video import VideoStream
 import cv2
-from collections import deque
-import numpy as np
 from datetime import datetime
-
+from PIL import Image
 
 # Global variables
-discoveryURL = 'http://10.7.40.146/ngsi9'
+discoveryURL = ''
 brokerURL = ''
 profile = {}
 runThread = True
 
 
+#  CameraMotion main code
 class CameraMotion:
 
-    def __init__(self, camera_id, src_video=0, max_width=500, roi=None, min_area=500, crossline=1):
+    def __init__(self, model, labels, confidence, camera_id, direction, src_video, roi=None, max_width=500):
+        # loading the deep learning model
+        self.model = DetectionEngine(model)
+        self.labels = labels
+        self.confidence = confidence
         # identification of the camera
         self.camera_id = camera_id
         # video source (file_name, rtsp_url, or 0:/dev/video0)
         self.video_stream = VideoStream(src=src_video)
-        # set the maximum width of the frame
-        self.max_width = max_width
         # region of interest: 'startCol,startLin,endCol,endLin'
         self.roi = roi
         if roi is not None:
@@ -43,50 +45,11 @@ class CameraMotion:
             self.startLin = int(startLin)
             self.endCol = int(endCol)
             self.endLin = int(endLin)
-
-        self.min_area = min_area  # consider only objects with this minimum area size
-        self.crossline = crossline  # shape of the cross line to detect motion: 1(-) 2(|) 3(/) 4(\)
-
-    # check if two line segments have an intersection
-    def segment_intersection(self, line1, line2):
-        class Point:
-            def __init__(self, x, y):
-                self.x = x
-                self.y = y
-
-        def ccw(A, B, C):
-            return (C.y - A.y) * (B.x - A.x) > (B.y - A.y) * (C.x - A.x)
-
-        def intersect(A, B, C, D):
-            return ccw(A, C, D) != ccw(B, C, D) and ccw(A, B, C) != ccw(A, B, D)
-
-        x1 = Point(line1[0][0], line1[0][1])
-        y1 = Point(line1[1][0], line1[1][1])
-        x2 = Point(line2[0][0], line2[0][1])
-        y2 = Point(line2[1][0], line2[1][1])
-        return intersect(x1, y1, x2, y2)
-
-    # gets the centroid of the box
-    def centroid(self, pts):
-        coordxcentroid = (pts[0] + pts[0] + pts[2]) // 2
-        coordycentroid = (pts[1] + pts[1] + pts[3]) // 2
-        return (coordxcentroid, coordycentroid)
+        self.max_width = max_width
+        self.direction = direction
 
     def run(self):
         global runThread
-        firstFrame = None
-
-        # initialize the frame dimensions (we'll set them as soon as we read
-        # the first frame from the video)
-        W = None
-        H = None
-
-        # initialize the list of tracked box
-        # and the coordinate deltas
-        from collections import deque
-        box = deque(maxlen=2)
-        (dX, dY) = (0, 0)
-        direction = ""
 
         self.video_stream.start()
         # loop over the frames of the video
@@ -101,105 +64,45 @@ class CameraMotion:
 
             # resize the frame
             frame = resize(frame, width=self.max_width)
+            orig = frame.copy()
 
-            # if the frame dimensions are empty, set them
-            if W is None or H is None:
-                (H, W) = frame.shape[:2]
-                if self.crossline == 1:  # horizontal
-                    crossline = ((0, H // 2), (W, H // 2))
-                elif self.crossline == 2:  # vertical
-                    crossline = ((W // 2, 0), (W // 2, H))
-                elif self.crossline == 3:  # diagonal /
-                    crossline = ((0, H), (W, 0))
-                elif self.crossline == 4:  # diagonal \
-                    crossline = ((0, 0), (W, H))
-                else:
-                    logging.info("[ERROR] invalid cross line parameter")
-                    break
+            # prepare the frame for object detection by converting (1) it
+            # from BGR to RGB channel ordering and then (2) from a NumPy
+            # array to PIL image format
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            frame = Image.fromarray(frame)
 
-            # convert the frame to grayscale, and blur it
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            gray = cv2.GaussianBlur(gray, (21, 21), 0)
+            # make predictions on the input frame
+            results = self.model.DetectWithImage(frame, threshold=self.confidence,
+                                                 keep_aspect_ratio=True, relative_coord=False)
 
-            # if the first frame is None, initialize it
-            if firstFrame is None:
-                logging.info("[INFO] starting background model...")
-                firstFrame = gray.copy().astype("float")
-                continue
-
-            # accumulate the weighted average between the current frame and
-            # previous frames, then compute the difference between the current
-            # frame and running average
-            cv2.accumulateWeighted(src=gray, dst=firstFrame, alpha=0.5)
-            frameDelta = cv2.absdiff(gray, cv2.convertScaleAbs(firstFrame))
-            thresh = cv2.threshold(frameDelta, 5, 255, cv2.THRESH_BINARY)[1]
-
-            # dilate the thresholded image to fill in holes, then find contours
-            # on thresholded image
-            thresh = cv2.dilate(thresh, None, iterations=2)
-            (_, cnts, _) = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-            # only proceed if at least one contour was found
-            if len(cnts) > 0:
-                # find the largest contour in the mask
-                c = max(cnts, key=cv2.contourArea)
-
-                # if the contour is too small, ignore it
-                if cv2.contourArea(c) >= self.min_area:
-                    # compute the bounding box for the contour
-                    (x, y, w, h) = cv2.boundingRect(c)
-                    box.appendleft((x, y, w, h))
-                else:
-                    box.clear()
-            else:
-                box.clear()
-
-            # track the last two points
-            if len(box) > 1:
-                # compute the centroid line of the moving object
-                objline = (self.centroid(box[0]), self.centroid(box[1]))
-                # check if the object is crossing the crossline
-                if self.segment_intersection(crossline, objline):
-                    dX = self.centroid(box[0])[0] - self.centroid(box[1])[0]
-                    dY = self.centroid(box[0])[1] - self.centroid(box[1])[1]
-                    (dirX, dirY) = ("", "")
-
-                    # ensure there is significant movement in the
-                    # x-direction or y-direction
-                    if np.abs(dX) > 4:
-                        dirX = "Right" if np.sign(dX) == 1 else "Left"
-                    if np.abs(dY) > 4:
-                        dirY = "Down" if np.sign(dY) == 1 else "Up"
-
-                    # handle when both directions are non-empty
-                    if dirX != "" and dirY != "":
-                        direction = "{}-{}".format(dirY, dirX)
-                    # otherwise, only one direction is non-empty
-                    else:
-                        direction = dirX if dirX != "" else dirY
-
-                    (x, y, w, h) = box[0]
-                    frame = frame[y:y+h, x:x+w]
-                    timestamp = datetime.now()
-                    filename = timestamp.strftime(self.camera_id + '_%Y-%m-%d_%H-%M-%S-%f_' + direction + '.jpg')
-                    logging.info("[INFO] captured object: {}".format(filename))
-                    cv2.imwrite(filename, frame)
-                    publishMySelf(filename, timestamp.strftime('%Y-%m-%d_%H-%M-%S-%f'), direction)
+            # check if object was detected
+            if len(results) > 0:
+                boxes = []
+                for r in results:
+                    # extract the bounding box and box and predicted class label
+                    box = r.bounding_box.flatten().astype("int")
+                    (startX, startY, endX, endY) = box
+                    boxes.append([int(startX), int(startY), int(endX), int(endY)])
+                timestamp = datetime.now()
+                filename = timestamp.strftime(self.camera_id + '_%Y-%m-%d_%H-%M-%S_%f_' + self.direction + '.jpg')
+                logging.info("[INFO] captured object: {}".format(filename))
+                cv2.imwrite('images/' + filename, orig)
+                publishMySelf(filename, self.direction, boxes)
 
         # cleanup the camera
         logging.info('[INFO] closing video source')
         self.video_stream.stop()
 
+
 ##########################################
 # FogFlow/Main code:
-def signal_handler(signal, frame):
-    global runThread
-    logging.info('[WARN] Signal to stop this process!')
-    # stop the thread running
-    runThread = False
-    # delete my registration and context entity
-    unpublishMySelf()
-    sys.exit(0)
+
+def getTimestamp(url):
+    # resp = urllib.request.urlopen("http://localhost:5000/timestamp")
+    with urllib.request.urlopen(url) as resp:
+        data = resp.info()
+    return str(data['timestamp'])
 
 
 def loadFile(filename):
@@ -242,9 +145,10 @@ def findNearbyBroker():
     return ''
 
 
-def publishMySelf(filename, timestamp, direction):
+def publishMySelf(filename, direction, boxes):
     global profile, brokerURL
 
+    faces = {'boxes': json.dumps(boxes)}
     # device entity
     deviceCtxObj = {}
     deviceCtxObj['entityId'] = {}
@@ -253,19 +157,19 @@ def publishMySelf(filename, timestamp, direction):
     deviceCtxObj['entityId']['isPattern'] = False
 
     deviceCtxObj['attributes'] = {}
-    deviceCtxObj['attributes']['url'] = {'type': 'string',
-                                         'value': 'http://' + profile['myIP'] + ':' + str(profile['myPort']) + '/' + filename}
-    deviceCtxObj['attributes']['timestamp'] = {'type': 'string',
-                                         'value': timestamp}
-    deviceCtxObj['attributes']['direction'] = {'type':'string',
-                                             'value': direction}
+    deviceCtxObj['attributes']['image_url'] = {'type': 'string', 'value': 'http://' + profile['myIP'] +
+                                                ':' + str(profile['myPort']) + '/image/' + filename}
+    deviceCtxObj['attributes']['direction'] = {'type': 'string', 'value': direction}
+    deviceCtxObj['attributes']['faces'] = {'type': 'array', 'value': faces}
     deviceCtxObj['attributes']['iconURL'] = {'type': 'string', 'value': profile['iconURL']}
-
+    deviceCtxObj['attributes']['camera_id'] = {'type': 'string', 'value': profile['id']}
+    deviceCtxObj['attributes']['timestamp_objectDetection'] = {'type': 'string',
+                                                               'value': getTimestamp(profile['timestamp_server'])}
+    deviceCtxObj['attributes']['faceencoding_server'] = {'type': 'string', 'value': profile['faceencoding_server']}
+    deviceCtxObj['attributes']['timestamp_server'] = {'type': 'string', 'value': profile['timestamp_server']}
     deviceCtxObj['metadata'] = {}
     deviceCtxObj['metadata']['location'] = {'type': 'point', 'value': {'latitude': profile['location']['latitude'],
                                                                        'longitude': profile['location']['longitude']}}
-    deviceCtxObj['metadata']['cameraID'] = {'type': 'string', 'value': profile['id']}
-
     updateContext(brokerURL, deviceCtxObj)
 
 
@@ -330,33 +234,55 @@ def deleteContext(broker, ctxObj):
         logging.info('[ERROR] failed to DELETE context: ' + response.text)
 
 
+######
+# HTTP server code
 class RequestHandler(BaseHTTPRequestHandler):
     # handle GET command
     def do_GET(self):
-        if self.path != '/':
-            # send code 200 response
-            filename = self.path[1:]
+        if self.path == '/timestamp':
+            self.send_response(200)
+            self.send_header
+            self.send_header('timestamp', str(datetime.now()))
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            self.wfile.write(datetime.now().strftime("%Y-%m-%d_%H-%M-%S-%f").encode('utf-8'))
+            return
+        elif self.path[:7] == '/image/':
+            # get image file name
+            filename = 'images/' + self.path[7:]
             if path.exists(filename):
                 self.send_response(200)
-                ctype = 'image/jpg' if '.jpg' in filename else 'application/json'
+                conttype = 'image/jpg' if '.jpg' in filename else 'application/json'
                 # send header first
-                self.send_header('Content-type', ctype)
+                self.send_header('Content-type', conttype)
                 self.end_headers()
-
                 # send the image file content to client
                 self.wfile.write(loadFile(filename))
                 return
-            
-        self.send_error(404, 'File not Found')
-        return
+        else:
+            self.send_error(404, 'File not Found')
+            return
+
+
+##############
+# Main functions
+def signal_handler(signal, frame):
+    global runThread
+    logging.info('[WARN] Signal to stop this process!')
+    # stop the thread running
+    runThread = False
+    # delete my registration and context entity
+    unpublishMySelf()
+    sys.exit(0)
 
 
 def thread_function(name):
     global runThread, profile
     logging.info("[INFO] Thread %s: starting", name)
 
-    camera = CameraMotion(camera_id=profile['id'], src_video=profile['source'], roi=profile['roi'], 
-        min_area=profile['area'], crossline=profile['crossline'])
+    camera = CameraMotion(camera_id=profile['id'], src_video=profile['source'], roi=profile['roi'],
+                          max_width=profile['max_width'], direction=profile['direction'],
+                          model=profile['model'], labels=profile['labels'], confidence=profile['confidence'])
     camera.run()
 
     logging.info("[INFO] Thread %s: finishing", name)
@@ -373,11 +299,12 @@ def run():
     thread.start()
 
     logging.info('[INFO] local image server at http://' + profile['myIP'] + ':'
-                 + str(profile['myPort']) + '/<filename>')
+                 + str(profile['myPort']) + '/image/<filename>')
+
     signal.signal(signal.SIGINT, signal_handler)
     server_address = ('0.0.0.0', profile['myPort'])
     httpd = HTTPServer(server_address, RequestHandler)
-    httpd.serve_forever() # blocking function call
+    httpd.serve_forever()  # blocking function call
 
 
 if __name__ == '__main__':
@@ -385,7 +312,7 @@ if __name__ == '__main__':
     logging.basicConfig(format=format, level=logging.INFO,
                         datefmt="%H:%M:%S")
 
-    cfgFileName = 'camera_motion_people.json'
+    cfgFileName = 'camera_motion_faces.json'
     if len(sys.argv) >= 2:
         cfgFileName = sys.argv[1]
 

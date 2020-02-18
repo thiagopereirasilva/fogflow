@@ -1,0 +1,21 @@
+{
+    "discoveryURL": "http://10.7.40.146/ngsi9",
+    "myIP": "10.7.16.41",
+    "myPort": 8090,
+    "location": {
+        "latitude": 35.7294824,
+        "longitude": 139.546094
+    },
+    "iconURL": "/img/camera.png",
+    "type": "Faces",
+    "id": "imd-cam-01",
+    "source": "videos/face_detection_cameras_teste_01.mp4",
+    "roi": "400,360,900,720",
+    "max_width": 500,
+    "direction": "exiting",
+    "model": "models/mobilenet_ssd_v2_face_quant_postprocess_edgetpu.tflite",
+    "labels": "models/coco_labels.txt",
+    "confidence": 0.4,
+    "timestamp_server": "http://10.7.40.146:5000/timestamp",
+    "faceencoding_server": "http://10.7.16.37:5000/api/"
+}
