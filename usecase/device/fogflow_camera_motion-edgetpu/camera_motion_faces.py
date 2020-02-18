@@ -148,7 +148,10 @@ def findNearbyBroker():
 def publishMySelf(filename, direction, boxes):
     global profile, brokerURL
 
-    faces = {'boxes': json.dumps(boxes)}
+    faces = []
+    for box in boxes:
+        faces.append({'box': box})
+
     # device entity
     deviceCtxObj = {}
     deviceCtxObj['entityId'] = {}
@@ -163,9 +166,10 @@ def publishMySelf(filename, direction, boxes):
     deviceCtxObj['attributes']['faces'] = {'type': 'array', 'value': faces}
     deviceCtxObj['attributes']['iconURL'] = {'type': 'string', 'value': profile['iconURL']}
     deviceCtxObj['attributes']['camera_id'] = {'type': 'string', 'value': profile['id']}
-    deviceCtxObj['attributes']['timestamp_objectDetection'] = {'type': 'string',
+    deviceCtxObj['attributes']['timestamp_facesDetection'] = {'type': 'string',
                                                                'value': getTimestamp(profile['timestamp_server'])}
     deviceCtxObj['attributes']['faceencoding_server'] = {'type': 'string', 'value': profile['faceencoding_server']}
+    deviceCtxObj['attributes']['database'] = {'type': 'string', 'value': profile['database']}
     deviceCtxObj['attributes']['timestamp_server'] = {'type': 'string', 'value': profile['timestamp_server']}
     deviceCtxObj['metadata'] = {}
     deviceCtxObj['metadata']['location'] = {'type': 'point', 'value': {'latitude': profile['location']['latitude'],
@@ -272,7 +276,8 @@ def signal_handler(signal, frame):
     # stop the thread running
     runThread = False
     # delete my registration and context entity
-    unpublishMySelf()
+    #logging.info('[EXIT] Unpublishing myself and exiting.')
+    #unpublishMySelf()
     sys.exit(0)
 
 
