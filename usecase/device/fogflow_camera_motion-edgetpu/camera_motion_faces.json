@@ -1,5 +1,5 @@
 {
-    "discoveryURL": "http://10.7.40.146/ngsi9",
+    "discoveryURL": "http://10.7.128.14/ngsi9",
     "myIP": "10.7.16.41",
     "myPort": 8090,
     "location": {
@@ -8,7 +8,7 @@
     },
     "iconURL": "/img/camera.png",
     "type": "Faces",
-    "id": "imd-cam-01",
+    "id": "imd-cam-02",
     "source": "videos/face_detection_cameras_teste_01.mp4",
     "roi": "400,360,900,720",
     "max_width": 500,
@@ -17,5 +17,6 @@
     "labels": "models/coco_labels.txt",
     "confidence": 0.4,
     "timestamp_server": "http://10.7.40.146:5000/timestamp",
-    "faceencoding_server": "http://10.7.16.37:5000/api/"
+    "faceencoding_server": "http://10.7.16.37:5000/api/",
+    "database": "encodingsEssex.pickle"
 }
