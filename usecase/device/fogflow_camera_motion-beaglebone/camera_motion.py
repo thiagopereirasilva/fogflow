@@ -1,5 +1,5 @@
 # Program to capture the motion of an object from camera/video_file and send it to FogFlow Operator
-# indicating its box and direction. All parameters must be informed in camera_motion.json
+# indicating its box and direction. All parameters must be informed in camera_motion_people.json
 
 import time
 import threading
@@ -393,7 +393,7 @@ if __name__ == '__main__':
     logging.basicConfig(format=format, level=logging.INFO,
                         datefmt="%H:%M:%S")
 
-    cfgFileName = 'camera_motion.json'
+    cfgFileName = 'camera_motion_people.json'
     if len(sys.argv) >= 2:
         cfgFileName = sys.argv[1]
 
